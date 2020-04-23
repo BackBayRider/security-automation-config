@@ -64,7 +64,7 @@ then
     alert_message="$alert_message|[$dependency]"'('$dependency_url')'"|$cpes|$cves|$severity|\n"
   done
   alert_message_footer='\nView the full report [here]('$html_url')'
-  alert_message_footer=$alert_message_footer' or [edit suppressions](https://github.com/mattermost/security-automation-config/edit/master/suppression.'$CIRCLE_PROJECT_REPONAME'.xml).'
+  alert_message_footer=$alert_message_footer' or [edit suppressions](https://github.com/mattermost/security-automation-config/edit/master/dependency-check/suppression.'$CIRCLE_PROJECT_REPONAME'.xml).'
 
   alert_message=$alert_message$alert_message_footer
 
