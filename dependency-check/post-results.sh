@@ -35,8 +35,7 @@ then
     # In case there are multiple dependencies with the same fileName, process them in order
     json_dependencies=$(echo $json_report | jq -r '[.dependencies[]?]|map(select(.fileName=="'$dependency'"))')
     json_dependency=$(echo $json_dependencies | jq -r '.['$index_of_name']')
-    ((++index_of_name))
-    if [ $index_of_name -ge $(echo $json_dependencies | jq -r length) ]
+    if [ $((++index_of_name)) -ge $(echo $json_dependencies | jq -r length) ]
     then
       index_of_name=0
     fi
