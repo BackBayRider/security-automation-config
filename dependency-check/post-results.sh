@@ -44,10 +44,10 @@ then
     sha1=$(echo $json_dependency | jq -r '.sha1')
     # The SHA-1 is set on the JSON report only for non-virtual dependencies
     # Calculation for virtual dependencies is analyzer-specific
-    if [ $sha1 = 'null' ]
+    if [ "$sha1" = 'null' ]
     then
       evidence_source=$(echo $json_dependency | jq -r '.evidenceCollected|.vendorEvidence+.productEvidence+.versionEvidence|map(.source)|unique[0]')
-      if [ $evidence_source = 'Gopkg.lock' ]
+      if [ "$evidence_source" = 'Gopkg.lock' ]
       then
         sha1=($(echo $json_dependency | jq -r '.packages[0].id' | tr -d '\n' | sha1sum))
       else
