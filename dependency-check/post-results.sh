@@ -29,9 +29,18 @@ then
 
   # Build the rows of the summary table
   vulnerable_dependencies=($(echo $json_report | jq -r '[.dependencies[]?]|map(select(.vulnerabilities).fileName)[]'))
+  index_of_name=0
   for dependency in ${vulnerable_dependencies[@]}
   do
-    json_dependency=$(echo $json_report | jq -r '[.dependencies[]?]|map(select(.fileName=="'$dependency'"))[]')
+    # In case there are multiple dependencies with the same fileName, process them in order
+    json_dependencies=$(echo $json_report | jq -r '[.dependencies[]?]|map(select(.fileName=="'$dependency'"))')
+    json_dependency=$(echo $json_dependencies | jq -r '.['$index_of_name']')
+    ((++index_of_name))
+    if [ $index_of_name -ge $(echo $json_dependencies | jq -r length) ]
+    then
+      index_of_name=0
+    fi
+
     index=$(echo $json_report | jq '[.dependencies[]?]|map(.fileName)|index("'$dependency'")+1')
     sha1=$(echo $json_dependency | jq -r '.sha1')
     # The SHA-1 is set on the JSON report only for non-virtual dependencies
