@@ -2,6 +2,8 @@
 # This is a script to post alerts about new Dependency-Check
 # findings to the community server
 
+max_post_length=4000
+
 # Get artifacts from CircleCI
 report_artifacts=$(curl -s https://circleci.com/api/v1.1/project/gh/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM/artifacts)
 json_url=$(echo $report_artifacts | jq -r 'map(select(.path == "Reports/OWASP/dependency-check-report.json").url)[0]')
@@ -13,18 +15,18 @@ if [ $vulnerability_count -ne 0 ]
 then
   if [ $vulnerability_count -gt 1 ]
   then
-    alert_message="$vulnerability_count new findings"
+    alert_message_header="$vulnerability_count new findings"
   else
-    alert_message="New finding"
+    alert_message_header="New finding"
   fi
-  alert_message="$alert_message in \`$CIRCLE_PROJECT_REPONAME\` CircleCI build [#$CIRCLE_BUILD_NUM]($CIRCLE_BUILD_URL)"
+  alert_message_header="$alert_message_header in \`$CIRCLE_PROJECT_REPONAME\` CircleCI build [#$CIRCLE_BUILD_NUM]($CIRCLE_BUILD_URL)"
   if [ -z "$CIRCLE_PULL_REQUEST" ]
   then
-    alert_message="$alert_message\n\n"
+    alert_message_header="$alert_message_header\n\n"
   else
-    alert_message="$alert_message, triggered by $CIRCLE_PULL_REQUEST\n\n"
+    alert_message_header="$alert_message_header, triggered by $CIRCLE_PULL_REQUEST\n\n"
   fi
-  alert_message="$alert_message|Dependency|CPEs|CVEs|Severity|\n|----------|----|----|--------|\n"
+  alert_message="$alert_message_header|Dependency|CPEs|CVEs|Severity|\n|----------|----|----|--------|\n"
   html_url=$(echo $report_artifacts | jq -r 'map(select(.path == "Reports/OWASP/dependency-check-report.html").url)[0]')
 
   # Build the rows of the summary table
@@ -61,8 +63,15 @@ then
     severity=$(echo $severities | jq -r 'if contains(["HIGH"]) then "`HIGH`" elif contains(["MEDIUM"]) then "`MEDIUM`" elif contains(["LOW"]) then "`LOW`" else "`Unknown`" end')
     alert_message="$alert_message|[$dependency]"'('$dependency_url')'"|$cpes|$cves|$severity|\n"
   done
-  alert_message=$alert_message'\nView the full report [here]('$html_url')'
-  alert_message=$alert_message' or [edit suppressions](https://github.com/mattermost/security-automation-config/edit/master/suppression.'$CIRCLE_PROJECT_REPONAME'.xml).'
+  alert_message_footer='\nView the full report [here]('$html_url')'
+  alert_message_footer=$alert_message_footer' or [edit suppressions](https://github.com/mattermost/security-automation-config/edit/master/suppression.'$CIRCLE_PROJECT_REPONAME'.xml).'
+
+  alert_message=$alert_message$alert_message_footer
+
+  if [ $(echo $alert_message | wc -c) -ge $max_post_length ]
+  then
+    alert_message=$alert_message_header'---\n**Summary table exceeds maximum post length and has been omitted.**\n\n---'$alert_message_footer
+  fi
 
   # Post to Mattermost
   curl -s -X POST -d 'payload={"username": "Dependency-Check", "icon_url": "https://www.mattermost.org/wp-content/uploads/2016/04/icon.png", "text":
