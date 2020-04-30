@@ -2,7 +2,7 @@
 # This is a script to post alerts about new Dependency-Check
 # findings to the community server
 
-max_post_length=4000
+max_post_length=16383
 
 # Get artifacts from CircleCI
 report_artifacts=$(curl -s https://circleci.com/api/v1.1/project/gh/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/$CIRCLE_BUILD_NUM/artifacts)
