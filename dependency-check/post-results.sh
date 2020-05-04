@@ -74,7 +74,12 @@ then
   fi
 
   # Post to Mattermost
-  curl -s -X POST -d 'payload={"username": "Dependency-Check", "icon_url": "https://www.mattermost.org/wp-content/uploads/2016/04/icon.png", "text":
-    "'"$alert_message"'"
-    }' "$SAST_WEBHOOK_URL"
+  if [ -z "$SAST_WEBHOOK_URL" ]
+  then
+    echo -e $alert_message
+  else
+    curl -s -X POST -d 'payload={"username": "Dependency-Check", "icon_url": "https://www.mattermost.org/wp-content/uploads/2016/04/icon.png", "text":
+      "'"$alert_message"'"
+      }' "$SAST_WEBHOOK_URL"
+  fi
 fi
