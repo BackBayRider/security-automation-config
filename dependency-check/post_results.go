@@ -78,14 +78,20 @@ func main() {
 	}
 	for _, artifact := range artifacts {
 		if artifact.Path == jsonReportPath {
+
 			report, err := downloadReport(artifact.URL)
 			if err != nil {
 				fmt.Println("Could not load report: ", err)
 				os.Exit(1)
 			}
+
 			count := report.getVulnerabilityCount()
+			if count == 0 {
+				break
+			}
+
 			findings := "New finding"
-			if count != 1 {
+			if count > 1 {
 				findings = fmt.Sprintf("%d new findings", count)
 			}
 			if pr != "" {
