@@ -56,4 +56,18 @@
     <cve>CVE-2018-13785</cve>
     <cve>CVE-2018-14048</cve>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+      DoS in dev server, no impact; Suppressing NPM-1486
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/http\-proxy@.*$</packageUrl>
+    <vulnerabilityName>1486</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Vulnerable code not used; Suppressing NPM-1219
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/markdown\-to\-jsx@.*$</packageUrl>
+    <vulnerabilityName>1219</vulnerabilityName>
+  </suppress>
 </suppressions>
