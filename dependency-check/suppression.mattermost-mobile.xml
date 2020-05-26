@@ -1,3 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+  <suppress>
+    <notes><![CDATA[
+      Folly, glog, React Native misidentified as a generic Facebook product
+    ]]></notes>
+    <packageUrl regex="true">^pkg:cocoapods/(Folly|glog)@.*$|^pkg:maven/com\.facebook\.react/react\-native@.*$</packageUrl>
+    <cpe>cpe:/a:facebook:facebook</cpe>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Glog misidentified as Folly
+    ]]></notes>
+    <packageUrl regex="true">^pkg:cocoapods/glog@.*$</packageUrl>
+    <cpe>cpe:/a:facebook:folly</cpe>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      V8 misidentified as Chromium
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.chromium/v8\-android@.*$</packageUrl>
+    <cpe>cpe:/a:chromium:chromium</cpe>
+    <cpe>cpe:/a:chromium_project:chromium</cpe>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Vulnerable AsyncSSLSocket class not used
+    ]]></notes>
+    <packageUrl regex="true">^pkg:cocoapods/Folly@.*$</packageUrl>
+    <cve>CVE-2019-11934</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Deserialization gadget chain in Closure Compiler; no impact
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/com\.google\.guava/guava@.*$</packageUrl>
+    <cve>CVE-2018-10237</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Protobuf issue in Closure Compiler; no impact
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/com\.google\.protobuf/protobuf\-java@.*$</packageUrl>
+    <vulnerabilityName>CVE-2015-5237</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Empty jar file causing false positives
+    ]]></notes>
+    <sha1>b04f3ee8f5e43fa3b162981b50bb72fe1acabb33</sha1>
+    <vulnerabilityName regex="true">.*</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Development tool command line parsing issues; no impact
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/yargs\-parser@.*$</packageUrl>
+    <vulnerabilityName>CVE-2020-7608</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Only used by Metro, no impact
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/ws@.*$</packageUrl>
+    <vulnerabilityName>CWE-331: Insufficient Entropy</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      No-impact Gradle issues
+    ]]></notes>
+    <filePath regex="true">^.*/android/gradle/wrapper/gradle-wrapper\.jar$</filePath>
+    <cve>CVE-2019-11065</cve>
+    <cve>CVE-2019-15052</cve>
+    <cve>CVE-2019-16370</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      No-impact Jetifier/Kotlin issues
+    ]]></notes>
+    <filePath regex="true">^.*/node_modules/jetifier/lib/kotlin-stdlib(-common)?-1\.3\.0\.jar$</filePath>
+    <cve>CVE-2019-10101</cve>
+    <cve>CVE-2019-10102</cve>
+    <cve>CVE-2019-10103</cve>
+  </suppress>
 </suppressions>

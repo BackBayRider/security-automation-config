@@ -1,3 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+  <suppress>
+    <notes><![CDATA[
+      No path to vulnerable code; suppressing CVE-2020-7608 + NPM identifier
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/yargs\-parser@.*$</packageUrl>
+    <vulnerabilityName>CVE-2020-7608</vulnerabilityName>
+    <vulnerabilityName>1500</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Suppress 7zip; only used with a trusted archive
+    ]]></notes>
+    <filePath regex="true">^.*/src/node_modules/7zip/7zip-lite/7-zip(32)?\.dll</filePath>
+    <cpe>cpe:/a:7-zip:7-zip</cpe>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Package `minimist` is only used to process trusted input; Suppressing NPM-1179 + OSSINDEX name
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/minimist@.*$</packageUrl>
+    <vulnerabilityName>1179</vulnerabilityName>
+    <vulnerabilityName>CWE-94: Improper Control of Generation of Code ('Code Injection')</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      DoS in dev server, no impact; Suppressing NPM-1486
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/http\-proxy@.*$</packageUrl>
+    <vulnerabilityName>1486</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Package `decompress` is only used to process trusted input; Suppressing NPM-1217 + OSSINDEX name
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/decompress@.*$</packageUrl>
+    <vulnerabilityName>1217</vulnerabilityName>
+    <vulnerabilityName>CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Package `acorn` is only used for builds; Suppressing NPM-1488 + OSSINDEX name
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/acorn@.*$</packageUrl>
+    <vulnerabilityName>1488</vulnerabilityName>
+    <vulnerabilityName>CWE-400: Uncontrolled Resource Consumption ('Resource Exhaustion')</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Package `kind-of` is only used to process trusted input; Suppressing CVE-2019-20149 + NPM identifier + OSSINDEX name
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/kind-of@.*$</packageUrl>
+    <vulnerabilityName>CVE-2019-20149</vulnerabilityName>
+    <vulnerabilityName>1490</vulnerabilityName>
+    <vulnerabilityName>CWE-74: Improper Neutralization of Special Elements in Output Used by a Downstream Component ('Injection')</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+     DoS in test runner, no impact
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/mocha@.*$</packageUrl>
+    <vulnerabilityName>CWE-400: Uncontrolled Resource Consumption ('Resource Exhaustion')</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Package `serialize-javascript` is only used for builds; Suppressing NPM-1426 + OSSINDEX name
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/serialize\-javascript@.*$</packageUrl>
+    <vulnerabilityName>1426</vulnerabilityName>
+    <vulnerabilityName>CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Build-time dependency, no impact; Suppressing NPM-1012 + OSSINDEX name
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/set\-value@.*$</packageUrl>
+    <vulnerabilityName>1012</vulnerabilityName>
+    <vulnerabilityName>CWE-400: Uncontrolled Resource Consumption ('Resource Exhaustion')</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      No path to vulnerable code; Suppressing NPM-1432 + OSSINDEX name
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/tree\-kill@.*$</packageUrl>
+    <vulnerabilityName>1432</vulnerabilityName>
+    <vulnerabilityName>CWE-94: Improper Control of Generation of Code ('Code Injection')</vulnerabilityName>
+  </suppress>
 </suppressions>
