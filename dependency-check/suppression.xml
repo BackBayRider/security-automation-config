@@ -42,4 +42,11 @@
     <packageUrl regex="true">^pkg:golang/golang\.org/x/crypto@.*$</packageUrl>
     <cpe>cpe:/a:ssh:ssh</cpe>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Ant issue in Dependency-Check, no impact
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.apache\.ant/ant@.*$</packageUrl>
+    <cve>CVE-2020-1945</cve>
+  </suppress>
 </suppressions>
