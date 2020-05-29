@@ -41,6 +41,13 @@
   </suppress>
   <suppress>
     <notes><![CDATA[
+      Issue patched in fork
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/marked@.*$</packageUrl>
+    <vulnerabilityName>CWE-185: Incorrect Regular Expression</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
       Suppressing Gradle CVEs specific to plugins not in use
     ]]></notes>
     <sha1>1d7e78262e0da9bbc9afe401fb000607a4dec5e5</sha1>
