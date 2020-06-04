@@ -2,11 +2,12 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
   <suppress>
     <notes><![CDATA[
-      No path to vulnerable code; suppressing CVE-2020-7608 + NPM identifier
+      No path to vulnerable code; suppressing CVE-2020-7608 + NPM identifier + OSSINDEX name
     ]]></notes>
     <packageUrl regex="true">^pkg:npm/yargs\-parser@.*$</packageUrl>
     <vulnerabilityName>CVE-2020-7608</vulnerabilityName>
     <vulnerabilityName>1500</vulnerabilityName>
+    <vulnerabilityName>CWE-400: Uncontrolled Resource Consumption ('Resource Exhaustion')</vulnerabilityName>
   </suppress>
   <suppress>
     <notes><![CDATA[
