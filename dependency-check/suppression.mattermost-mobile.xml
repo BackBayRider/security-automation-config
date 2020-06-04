@@ -57,6 +57,7 @@
     <packageUrl regex="true">^pkg:npm/yargs\-parser@.*$</packageUrl>
     <vulnerabilityName>CVE-2020-7608</vulnerabilityName>
     <vulnerabilityName>1500</vulnerabilityName>
+    <vulnerabilityName>CWE-400: Uncontrolled Resource Consumption ('Resource Exhaustion')</vulnerabilityName>
   </suppress>
   <suppress>
     <notes><![CDATA[
