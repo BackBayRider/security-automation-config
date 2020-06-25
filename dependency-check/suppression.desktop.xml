@@ -26,10 +26,11 @@
   </suppress>
   <suppress>
     <notes><![CDATA[
-      DoS in dev server, no impact; Suppressing NPM-1486
+      DoS in dev server, no impact; Suppressing NPM-1486 + OSSINDEX name
     ]]></notes>
     <packageUrl regex="true">^pkg:npm/http\-proxy@.*$</packageUrl>
     <vulnerabilityName>1486</vulnerabilityName>
+    <vulnerabilityName>CWE-400: Uncontrolled Resource Consumption ('Resource Exhaustion')</vulnerabilityName>
   </suppress>
   <suppress>
     <notes><![CDATA[
