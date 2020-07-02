@@ -79,4 +79,11 @@
     <packageUrl regex="true">^pkg:npm/markdown\-to\-jsx@.*$</packageUrl>
     <vulnerabilityName>1219</vulnerabilityName>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Vulnerable function not used; suppressing NPM-1523
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/lodash@.*$</packageUrl>
+    <vulnerabilityName>1523</vulnerabilityName>
+  </suppress>
 </suppressions>
