@@ -88,4 +88,11 @@
     <vulnerabilityName>1432</vulnerabilityName>
     <vulnerabilityName>CWE-94: Improper Control of Generation of Code ('Code Injection')</vulnerabilityName>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Vulnerable function not used; suppressing NPM-1523
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/lodash@.*$</packageUrl>
+    <vulnerabilityName>1523</vulnerabilityName>
+  </suppress>
 </suppressions>
