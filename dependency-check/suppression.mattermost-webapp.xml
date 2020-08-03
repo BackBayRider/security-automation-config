@@ -86,4 +86,11 @@
     <packageUrl regex="true">^pkg:npm/lodash@.*$</packageUrl>
     <vulnerabilityName>1523</vulnerabilityName>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Vulnerable signature algorithm not used; suppressing NPM-1547
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/elliptic@.*$</packageUrl>
+    <vulnerabilityName>1547</vulnerabilityName>
+  </suppress>
 </suppressions>
