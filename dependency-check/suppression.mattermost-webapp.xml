@@ -93,4 +93,11 @@
     <packageUrl regex="true">^pkg:npm/elliptic@.*$</packageUrl>
     <vulnerabilityName>1547</vulnerabilityName>
   </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Npm package misidentified as a Ruby package of the same name; suppressing CVE-2020-7663
+    ]]></notes>
+    <packageUrl regex="true">^pkg:npm/websocket\-extensions@.*$</packageUrl>
+    <vulnerabilityName>CVE-2020-7663</vulnerabilityName>
+  </suppress>
 </suppressions>
