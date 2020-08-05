@@ -81,10 +81,11 @@
   </suppress>
   <suppress>
     <notes><![CDATA[
-      Vulnerable function not used; suppressing NPM-1523
+      Vulnerable function not used; suppressing NPM-1523 + CVE
     ]]></notes>
     <packageUrl regex="true">^pkg:npm/lodash@.*$</packageUrl>
     <vulnerabilityName>1523</vulnerabilityName>
+    <vulnerabilityName>CVE-2020-8203</vulnerabilityName>
   </suppress>
   <suppress>
     <notes><![CDATA[
