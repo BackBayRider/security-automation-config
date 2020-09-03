@@ -16,6 +16,48 @@
   </suppress>
   <suppress>
     <notes><![CDATA[
+      Vulnerable component not in use
+    ]]></notes>
+    <packageUrl regex="true">^pkg:golang/github\.com/coreos/etcd@.*$</packageUrl>
+    <cve>CVE-2020-15106</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Vulnerable component not in use
+    ]]></notes>
+    <packageUrl regex="true">^pkg:golang/github\.com/coreos/etcd@.*$</packageUrl>
+    <cve>CVE-2020-15112</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Vulnerable component not in use
+    ]]></notes>
+    <packageUrl regex="true">^pkg:golang/github\.com/coreos/etcd@.*$</packageUrl>
+    <cve>CVE-2020-15113</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Vulnerable component not in use
+    ]]></notes>
+    <packageUrl regex="true">^pkg:golang/github\.com/coreos/etcd@.*$</packageUrl>
+    <vulnerabilityName>CVE-2020-15114</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Vulnerable component not in use
+    ]]></notes>
+    <packageUrl regex="true">^pkg:golang/github\.com/coreos/etcd@.*$</packageUrl>
+    <vulnerabilityName>CVE-2020-15115</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+      Vulnerable component not in use
+    ]]></notes>
+    <packageUrl regex="true">^pkg:golang/github\.com/coreos/etcd@.*$</packageUrl>
+    <vulnerabilityName>CVE-2020-15136</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
       Misidentified version (commit hash vs. date)
     ]]></notes>
     <packageUrl regex="true">^pkg:golang/golang\.org/x/crypto@.*$</packageUrl>
