@@ -2,13 +2,6 @@
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
   <suppress>
     <notes><![CDATA[
-      Vulnerable cipher (Salsa20) not used
-    ]]></notes>
-    <packageUrl regex="true">^pkg:golang/golang\.org/x/crypto@.*$</packageUrl>
-    <vulnerabilityName>CVE-2019-11840</vulnerabilityName>
-  </suppress>
-  <suppress>
-    <notes><![CDATA[
       Vulnerability affects only RBAC and client-cert-auth
     ]]></notes>
     <packageUrl regex="true">^pkg:golang/github\.com/coreos/etcd@.*$</packageUrl>
@@ -55,13 +48,6 @@
     ]]></notes>
     <packageUrl regex="true">^pkg:golang/github\.com/coreos/etcd@.*$</packageUrl>
     <vulnerabilityName>CVE-2020-15136</vulnerabilityName>
-  </suppress>
-  <suppress>
-    <notes><![CDATA[
-      Misidentified version (commit hash vs. date)
-    ]]></notes>
-    <packageUrl regex="true">^pkg:golang/golang\.org/x/crypto@.*$</packageUrl>
-    <vulnerabilityName>CVE-2017-3204</vulnerabilityName>
   </suppress>
   <suppress>
     <notes><![CDATA[
