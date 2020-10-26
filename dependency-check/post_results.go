@@ -2,23 +2,36 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"strings"
+	"time"
+
+	"github.com/joho/godotenv"
 )
 
 const (
-	maxPostLength        = 16383
-	circleCIArtifactsURL = "https://circleci.com/api/v1.1/project/gh/%s/%s/artifacts"
-	jsonReportPath       = "Reports/OWASP/dependency-check-report.json"
-	htmlReportPath       = "Reports/OWASP/dependency-check-report.html"
-	botUsername          = "Dependency-Check"
-	botIcon              = "https://www.mattermost.org/wp-content/uploads/2016/04/icon.png"
+	defaultRequestTimeout             = 60
+	maxPostLength                     = 16383
+	gitlabJobNameOWASPDependencyCheck = "owasp-dependency-check"
+	jsonReportPath                    = "Reports/OWASP/dependency-check-report.json"
+	htmlReportPath                    = "Reports/OWASP/dependency-check-report.html"
+	botUsername                       = "Dependency-Check"
+	//botIcon              = "https://www.mattermost.org/wp-content/uploads/2016/04/icon.png"
 )
+
+type Server struct {
+	Client                *http.Client
+	GitlabUrl             string
+	GitlabToken           string
+	MattermostWebhookSAST string
+}
 
 type circleCIArtifact struct {
 	Path string
@@ -49,31 +62,58 @@ type vulnerabilityID struct {
 
 type vulnerabilityIDList []vulnerabilityID
 
-type webhookRequest struct {
-	Username string `json:"username"`
-	IconURL  string `json:"icon_url"`
-	Text     string `json:"text"`
-}
-
 func main() {
-	var (
-		project = os.Getenv("CIRCLE_PROJECT_REPONAME")
-		repo    = fmt.Sprintf("%s/%s", os.Getenv("CIRCLE_PROJECT_USERNAME"), project)
-		build   = os.Getenv("CIRCLE_BUILD_NUM")
-		pr      = os.Getenv("CIRCLE_PULL_REQUEST")
-		webhook = os.Getenv("SAST_WEBHOOK_URL")
-	)
+	s, err := New()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	artifacts, err := getArtifacts(repo, build)
+	ctx, cancel := context.WithTimeout(context.Background(), defaultRequestTimeout*time.Second)
+	defer cancel()
+
+	serverHost, ok := os.LookupEnv("CI_SERVER_HOST")
+	if !ok {
+		log.Fatalf("not set %v", "CI_SERVER_HOST")
+	}
+	projectName, ok := os.LookupEnv("CI_PROJECT_NAME")
+	if !ok {
+		log.Fatalf("not set %v", "CI_PROJECT_NAME")
+	}
+	projectNamespace, ok := os.LookupEnv("CI_PROJECT_NAMESPACE")
+	if !ok {
+		log.Fatalf("not set %v", "CI_PROJECT_NAMESPACE")
+	}
+	projectID, ok := os.LookupEnv("CI_PROJECT_ID")
+	if !ok {
+		log.Fatalf("not set %v", "CI_PROJECT_ID")
+	}
+	ref, ok := os.LookupEnv("CI_COMMIT_REF_NAME")
+	if !ok {
+		log.Fatalf("not set %v", "CI_COMMIT_REF_NAME")
+	}
+	//jobName, ok := os.LookupEnv("CI_JOB_NAME")
+	//if !ok {
+	//	log.Fatalf("not set %v", "CI_JOB_NAME")
+	//}
+	pipelineIID, ok := os.LookupEnv("CI_PIPELINE_IID")
+	if !ok {
+		log.Fatalf("not set %v", "CI_PIPELINE_IID")
+	}
+	jobToken, ok := os.LookupEnv("CI_JOB_TOKEN")
+	if !ok {
+		log.Fatalf("not set %v", "CI_JOB_TOKEN")
+	}
+
+	artifacts, err := s.getArtifacts(ctx, projectID, ref, gitlabJobNameOWASPDependencyCheck)
 	if err != nil {
 		fmt.Println("Could not load artifacts: ", err)
 		os.Exit(1)
 	}
 
-	var url string
+	var artifactUrl string
 	for _, artifact := range artifacts {
 		if artifact.Path == htmlReportPath {
-			url = artifact.URL
+			artifactUrl = artifact.URL
 		}
 	}
 	for _, artifact := range artifacts {
@@ -94,19 +134,20 @@ func main() {
 			if count > 1 {
 				findings = fmt.Sprintf("%d new findings", count)
 			}
-			if pr != "" {
-				pr = fmt.Sprintf(", triggered by %s", pr)
+			if ref != "" {
+				ref = fmt.Sprintf(", triggered by %s", ref)
 			}
-			header := fmt.Sprintf("%s in `%s` CircleCI build [#%s](https://circleci.com/gh/%s/%s)%s", findings, repo, build, repo, build, pr)
-			body := report.summarize(url)
-			footer := fmt.Sprintf("View the full report [here](%s) or [edit suppressions](https://github.com/mattermost/security-automation-config/edit/master/dependency-check/suppression.%s.xml).", url, strings.Split(repo, "/")[1])
+			header := fmt.Sprintf("%v in `%v` GitLab [#%v](https://gitlab-ci-token:%v@%v/%v/%v/-/pipelines/%v)%v", findings, projectName, pipelineIID, jobToken, serverHost, projectNamespace, projectName, pipelineIID, ref)
+			body := report.summarize(artifactUrl)
+			footer := fmt.Sprintf("View the full report [here](%s) or [edit suppressions](https://github.com/mattermost/security-automation-config/edit/master/dependency-check/suppression.%v.xml).", artifactUrl, strings.Split(projectName, "/")[1])
 
 			summary := fmt.Sprintf("%s\n\n%s\n%s", header, body, footer)
 			if len(summary) > maxPostLength {
 				summary = fmt.Sprintf("%s\n\n---\n**Summary table exceeds maximum post length and has been omitted.**\n\n---\n%s", header, footer)
 			}
 
-			if err := postToWebhook(webhook, summary); err != nil {
+			webhookPayload := &Payload{Username: botUsername, Text: summary}
+			if err := s.sendToWebhook(ctx, s.MattermostWebhookSAST, webhookPayload); err != nil {
 				fmt.Println("Failed to post to webhook: ", err)
 				os.Exit(1)
 			}
@@ -116,33 +157,53 @@ func main() {
 	}
 }
 
-func postToWebhook(webhook, message string) error {
-	payload, err := json.Marshal(webhookRequest{
-		Username: botUsername, IconURL: botIcon, Text: message,
-	})
+func New() (*Server, error) {
+	err := godotenv.Load()
 	if err != nil {
-		return err
+		log.Fatal("Error loading .env file")
 	}
-	res, err := http.PostForm(webhook, url.Values{"payload": {string(payload)}})
-	if err != nil {
-		return err
+
+	gitlabUrl, ok := os.LookupEnv("GITLAB_URL")
+	if !ok {
+		log.Fatalf("not set %v", "GITLAB_URL")
 	}
-	if res.StatusCode != 200 {
-		return fmt.Errorf("webhook returned %d %s", res.StatusCode, res.Status)
+	gitlabToken, ok := os.LookupEnv("GITLAB_TOKEN")
+	if !ok {
+		log.Fatalf("not set %v", "GITLAB_TOKEN")
 	}
-	return nil
+	mattermostWebhookSAST, ok := os.LookupEnv("MATTERMOST_WEBHOOK_SAST")
+	if !ok {
+		log.Fatalf("not set %v", "MATTERMOST_WEBHOOK_SAST")
+	}
+
+	s := &Server{
+		Client:                http.DefaultClient,
+		GitlabUrl:             gitlabUrl,
+		GitlabToken:           gitlabToken,
+		MattermostWebhookSAST: mattermostWebhookSAST,
+	}
+
+	return s, nil
 }
 
-func getArtifacts(repo, build string) ([]circleCIArtifact, error) {
-	req, _ := http.NewRequest("GET", fmt.Sprintf(circleCIArtifactsURL, repo, build), nil)
-	req.Header.Set("Accept", "application/json")
-	res, err := http.DefaultClient.Do(req)
+func (s *Server) getArtifacts(ctx context.Context, projectID string, ref string, jobName string) ([]circleCIArtifact, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf(s.GitlabUrl+"/api/v4/projects/"+projectID+"/jobs/artifacts/"+ref+"/download?job="+jobName), nil)
 	if err != nil {
 		return nil, err
 	}
-	body, _ := ioutil.ReadAll(res.Body)
-	res.Body.Close()
-	response := []circleCIArtifact{}
+	req.Header.Set("Accept", "application/json")
+	req.Header.Add("private-token", s.GitlabToken)
+	res, err := s.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	closeBody(res)
+
+	var response []circleCIArtifact
 	err = json.Unmarshal(body, &response)
 	return response, err
 }
@@ -152,8 +213,11 @@ func downloadReport(url string) (*report, error) {
 	if err != nil {
 		return nil, err
 	}
-	body, _ := ioutil.ReadAll(res.Body)
-	res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	closeBody(res)
 	response := &report{}
 	err = json.Unmarshal(body, &response)
 	return response, err
@@ -238,4 +302,11 @@ func findReferenceOnHTMLReport(report []byte, i int) []byte {
 	marker := []byte(fmt.Sprintf("#l%d_", i+1))
 	pos := bytes.Index(report, marker)
 	return report[pos : pos+len(marker)+40]
+}
+
+func closeBody(r *http.Response) {
+	if r.Body != nil {
+		_, _ = io.Copy(ioutil.Discard, r.Body)
+		_ = r.Body.Close()
+	}
 }
